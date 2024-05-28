@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Name 	string `json:"name"`
+	Name 	string 	`json:"name"`
 	Email	string	`gorm:"unique" json:"email"`
-	Address
+	Address	Address	`gorm:"foreignKey:UserId"`
 }
 
 type Address struct {
-	userId		uint
-	streetName	string
+	UserId		uint
+	StreetName	string
 }
