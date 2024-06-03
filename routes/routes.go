@@ -6,6 +6,11 @@ import (
 )
 
 func Setup(r *fiber.App) {
-	r.Post("/api/register", controllers.Register)
-	r.Post("/api/login", controllers.Login)
+	auth := r.Group("/auth")
+	{
+		auth.Post("/register", controllers.Register)
+		auth.Post("/login", controllers.Login)
+	}
+
+	r.Get("/api/user", controllers.User)
 }
