@@ -118,10 +118,10 @@ func User (ac *fiber.Ctx) error {
 	if err != nil || !token.Valid {
 		return ac.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "unauthorized user",
-			"success": false,
+			"success": true,
 		})
 	}
-	
+
 	claims := token.Claims.(*Claims)
 
 	var user models.User
