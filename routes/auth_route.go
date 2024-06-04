@@ -6,14 +6,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Setup(r *fiber.App) {
-	auth := r.Group("/auth")
+func Setup(ar *fiber.App) {
+	auth := ar.Group("/auth")
 	{
 		auth.Post("/register", controllers.Register)
 		auth.Post("/login", controllers.Login)
 	}
 
-	user := r.Group("/api")
+	user := ar.Group("/api")
 	user.Use(middlewares.IsAuthenticated)
 	{
 		user.Get("/user", controllers.GetUser)
