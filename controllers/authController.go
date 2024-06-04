@@ -98,7 +98,7 @@ func Login(ac *fiber.Ctx) error {
 	ac.Cookie(&cookie)
 
 	return ac.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "user logged in successfully",
+		"message": "logged in successfully",
 		"user": user,
 		"success": true,
 	})
@@ -118,7 +118,7 @@ func User (ac *fiber.Ctx) error {
 	if err != nil || !token.Valid {
 		return ac.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "unauthorized user",
-			"success": true,
+			"success": false,
 		})
 	}
 
@@ -126,10 +126,15 @@ func User (ac *fiber.Ctx) error {
 
 	var user models.User
 
-	database.DB.Where("id = ?", claims.Issuer).First(&user)
+	if err := database.DB.Where("id = ?", claims.Issuer).First(&user).Error; err != nil {
+		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "could not get user",
+			"success": false,
+		})
+	}
 
 	return ac.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "authenticated user",
+		"message": "successfully get user ",
 		"user": user,
 		"success": true,
 	})

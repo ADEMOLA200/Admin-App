@@ -77,3 +77,48 @@ package controllers
 // 		"success": true,
 // 	})
 // }
+
+
+
+// func Register(ac *fiber.Ctx) error {
+// 	var data map[string]string
+
+// 	if err := ac.BodyParser(&data); err != nil {
+// 		return err
+// 	}
+
+// 	if data["password"] != data["password_confirm"] {
+// 		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"message": "passwords do not match",
+// 			"success": false,
+// 		})
+// 	}
+
+// 	password, err := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
+// 	if err != nil {
+// 		return ac.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"message": "failed to encrypt password",
+// 			"success": false,
+// 		})
+// 	}
+
+// 	user := models.User {
+// 		FirstName: data["first_name"],
+// 		LastName: data["last_name"],
+// 		Email: data["email"],
+// 		Password: password,
+// 	}
+
+// 	if err := database.DB.Create(&user).Error; err != nil {
+// 		return ac.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"message": "failed to create user",
+// 			"success": false,
+// 		})
+// 	}
+
+// 	return ac.Status(fiber.StatusOK).JSON(fiber.Map{
+// 		"message": "user registered successfully",
+// 		"user": user,
+// 		"success": true,
+// 	})
+// }
