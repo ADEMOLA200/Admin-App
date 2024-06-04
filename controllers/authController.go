@@ -6,7 +6,8 @@ import (
 
 	"github.com/ADEMOLA200/Admin-App.git/database"
 	"github.com/ADEMOLA200/Admin-App.git/models"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/ADEMOLA200/Admin-App.git/utils"
+	_"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -77,12 +78,7 @@ func Login(ac *fiber.Ctx) error {
 		})
 	}
 
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer: strconv.Itoa(int(user.Id)),
-		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-	})
-
-	token, err := claims.SignedString([]byte("secret"))
+	token, err := utils.GenerateJwt(strconv.Itoa(int(user.Id)))
 
 	if err != nil {
 		return ac.SendStatus(fiber.StatusInternalServerError)
@@ -104,29 +100,14 @@ func Login(ac *fiber.Ctx) error {
 	})
 }
 
-type Claims struct {
-	jwt.StandardClaims
-}
-
 func User (ac *fiber.Ctx) error {
 	cookie := ac.Cookies("jwt")
 
-	token, err := jwt.ParseWithClaims(cookie, &Claims{}, func(t *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
-	})
-
-	if err != nil || !token.Valid {
-		return ac.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "unauthorized user",
-			"success": false,
-		})
-	}
-
-	claims := token.Claims.(*Claims)
+	id, _ := utils.ParseJwt(cookie)
 
 	var user models.User
 
-	if err := database.DB.Where("id = ?", claims.Issuer).First(&user).Error; err != nil {
+	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "could not get user",
 			"success": false,

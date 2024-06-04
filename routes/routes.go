@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/ADEMOLA200/Admin-App.git/controllers"
+	"github.com/ADEMOLA200/Admin-App.git/middlewares"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,6 +13,10 @@ func Setup(r *fiber.App) {
 		auth.Post("/login", controllers.Login)
 	}
 
-	r.Get("/api/user", controllers.User)
-	r.Post("/api/logout", controllers.Logout)
+	user := r.Group("/api")
+	user.Use(middlewares.IsAuthenticated)
+	{
+		user.Get("/api/user", controllers.User)
+		user.Post("/api/logout", controllers.Logout)
+	}
 }
