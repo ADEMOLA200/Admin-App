@@ -1,18 +1,12 @@
 package main
 
 import (
-	"github.com/ADEMOLA200/Admin-App.git/database"
-	"github.com/ADEMOLA200/Admin-App.git/routes"
-	"github.com/gofiber/fiber/v2"
+
+	"github.com/ADEMOLA200/Admin-App.git/app"
+	"go.uber.org/fx"
 )
 
 func main() {
-	database.Connect()
-
-	app := fiber.New()
-	
-	routes.Setup(app)
-
-	app.Listen(":9000")
+	fx.New(app.Module).Run()
 }
  
