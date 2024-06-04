@@ -16,7 +16,7 @@ func Setup(r *fiber.App) {
 	user := r.Group("/api")
 	user.Use(middlewares.IsAuthenticated)
 	{
-		user.Get("/user", controllers.User)
+		user.Get("/user", controllers.GetUser)
 		user.Post("/logout", controllers.Logout)
 	}
 }

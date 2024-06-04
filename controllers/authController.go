@@ -100,7 +100,7 @@ func Login(ac *fiber.Ctx) error {
 	})
 }
 
-func User (ac *fiber.Ctx) error {
+func GetUser (ac *fiber.Ctx) error {
 	cookie := ac.Cookies("jwt")
 
 	id, _ := utils.ParseJwt(cookie)
