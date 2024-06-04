@@ -19,7 +19,7 @@ func GenerateJwt(issuer string) (string, error) {
 
 func ParseJwt(cookie string) (string, error) {
 	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+		return []byte(SecretKey), nil
 	})
 
 	if err != nil || !token.Valid {
