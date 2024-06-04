@@ -11,5 +11,6 @@ func UserSetup(ur *fiber.App) {
 	users.Use(middlewares.IsAuthenticated)
 	{
 		users.Get("/users", controllers.GetAllUsers)
+		users.Post("/create-user", controllers.CreateUser)
 	}
 }
