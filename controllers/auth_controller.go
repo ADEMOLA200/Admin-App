@@ -7,9 +7,7 @@ import (
 	"github.com/ADEMOLA200/Admin-App.git/database"
 	"github.com/ADEMOLA200/Admin-App.git/models"
 	"github.com/ADEMOLA200/Admin-App.git/utils"
-	_"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Register(ac *fiber.Ctx) error {
@@ -26,20 +24,13 @@ func Register(ac *fiber.Ctx) error {
 		})
 	}
 
-	password, err := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
-	if err != nil {
-		return ac.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "failed to encrypt password",
-			"success": false,
-		})
-	}
-
 	user := models.User {
 		FirstName: data["first_name"],
 		LastName: data["last_name"],
 		Email: data["email"],
-		Password: password,
 	}
+
+	user.SetPassword(data["password"])
 
 	if err := database.DB.Create(&user).Error; err != nil {
 		return ac.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -71,7 +62,7 @@ func Login(ac *fiber.Ctx) error {
 		})
 	}
 
-	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(data["password"])); err != nil {
+	if err := user.ComparePasswords(data["password"]); err != nil {
 		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "incorrect password",
 			"success": false,
