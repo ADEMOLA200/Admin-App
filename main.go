@@ -14,4 +14,3 @@ func main() {
     }
 	fx.New(app.Module).Run()
 }
- 
