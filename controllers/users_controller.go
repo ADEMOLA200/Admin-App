@@ -34,6 +34,13 @@ func CreateUser(uc *fiber.Ctx) error {
 
 	user.SetPassword("1234")
 
+	if err := database.DB.Create(&user).Error; err != nil {
+		return uc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "could not create user, email already exist",
+			"success": false,
+		})
+	}
+
 	return uc.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "user created successfully",
 		"user": user,
@@ -95,4 +102,35 @@ func UpdateUserById(uc *fiber.Ctx) error {
         "user": user,
         "success": true,
     })
+}
+
+func DeleteUser(uc *fiber.Ctx) error {
+	id, err := strconv.Atoi(uc.Params("id"))
+	if err != nil {
+		return uc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "invalid id, id must be an integer value",
+			"success": false,
+		})
+	}
+
+	var user models.User
+	result := database.DB.Where("id = ?", id).Delete(&user)
+	if result.Error != nil {
+		return uc.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "error occurred while deleting user",
+			"success": false,
+		})
+	}
+
+	if result.RowsAffected == 0 {
+		return uc.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "could not delete user with the id of " + strconv.Itoa(id),
+			"success": false,
+		})
+	}
+
+	return uc.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "deleted user with id " + strconv.Itoa(id) + " successfully",
+		"success": true,
+	})
 }
