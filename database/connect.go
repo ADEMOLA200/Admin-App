@@ -1,21 +1,31 @@
 package database
 
 import (
-	"github.com/ADEMOLA200/Admin-App.git/models"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+    "fmt"
+    "os"
+
+    "github.com/ADEMOLA200/Admin-App.git/models"
+    "gorm.io/driver/mysql"
+    "gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
 func Connect() {
-	db, err := gorm.Open(mysql.Open("root:rootroot@/admin_app"), &gorm.Config{})
+    dbUser := os.Getenv("DB_USER")
+    dbPassword := os.Getenv("DB_PASSWORD")
 
-	if err != nil {
-		panic("could not connect to the database")
-	}
+    if dbUser == "" || dbPassword == "" {
+        panic("DB_USER or DB_PASSWORD environment variables are not set")
+    }
 
-	DB = db
+    dsn := fmt.Sprintf("%s:%s@/admin_app", dbUser, dbPassword)
+    db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	DB.AutoMigrate(&models.User{})
+    if err != nil {
+        panic("could not connect to the database: " + err.Error())
+    }
+
+    DB = db
+    DB.AutoMigrate(&models.User{})
 }
