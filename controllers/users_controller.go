@@ -4,7 +4,6 @@ import (
 	"github.com/ADEMOLA200/Admin-App.git/database"
 	"github.com/ADEMOLA200/Admin-App.git/models"
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func GetAllUsers(uc *fiber.Ctx) error {
@@ -31,9 +30,7 @@ func CreateUser(uc *fiber.Ctx) error {
 		return err
 	}
 
-	password, _ := bcrypt.GenerateFromPassword([]byte("1234"), 14)
-
-	user.Password = password
+	user.SetPassword("1234")
 
 	return uc.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "user created successfully",

@@ -12,6 +12,5 @@ func UserSetup(ur *fiber.App) {
 	{
 		users.Get("/users", controllers.GetAllUsers)
 		users.Post("/create-user", controllers.CreateUser)
-		//users.Post("/test-route", controllers.TestRoute)
 	}
 }
