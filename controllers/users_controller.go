@@ -42,10 +42,10 @@ func CreateUser(uc *fiber.Ctx) error {
 }
 
 func GetUserById(uc *fiber.Ctx) error {
-    id, err := strconv.Atoi(uc.Query("id"))
+    id, err := strconv.Atoi(uc.Params("id"))
     if err != nil {
         return uc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "invalid id",
+            "message": "invalid id, id must be an integer value",
             "success": false,
         })
     }
@@ -54,13 +54,44 @@ func GetUserById(uc *fiber.Ctx) error {
     result := database.DB.First(&user, uint(id))
     if result.Error != nil {
         return uc.Status(fiber.StatusNotFound).JSON(fiber.Map{
-            "message": "user not found with id " + strconv.Itoa(id),
+            "message": "user not found with the id of " + strconv.Itoa(id),
             "success": false,
         })
     }
 
     return uc.Status(fiber.StatusOK).JSON(fiber.Map{
         "message": "user successfully found",
+        "user": user,
+        "success": true,
+    })
+}
+
+func UpdateUserById(uc *fiber.Ctx) error {
+	id, err := strconv.Atoi(uc.Params("id"))
+    if err!= nil {
+        return uc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "message": "invalid id, id must be an integer value",
+            "success": false,
+        })
+    }
+
+	var user models.User
+	result := database.DB.First(&user, uint(id))
+    if result.Error!= nil {
+        return uc.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "user not found with the id of " + strconv.Itoa(id),
+            "success": false,
+        })
+    }
+
+	if err := uc.BodyParser(&user); err!= nil {
+		return err
+	}
+
+	database.DB.Model(&user).Updates(user)
+
+	return uc.Status(fiber.StatusOK).JSON(fiber.Map{
+        "message": "updated user successfully",
         "user": user,
         "success": true,
     })

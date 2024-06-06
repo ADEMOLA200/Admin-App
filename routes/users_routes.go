@@ -12,6 +12,7 @@ func UserSetup(ur *fiber.App) {
 	{
 		users.Get("/users", controllers.GetAllUsers)
 		users.Post("/create-user", controllers.CreateUser)
-		users.Get("/get-user-id", controllers.GetUserById)
+		users.Get("/get-user-id/:id", controllers.GetUserById)
+		users.Put("/user/:id", controllers.UpdateUserById)
 	}
 }
