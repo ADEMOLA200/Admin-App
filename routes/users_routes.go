@@ -7,12 +7,14 @@ import (
 )
 
 func UserSetup(ur *fiber.App) {
-	users := ur.Group("/api")
-	users.Use(middlewares.IsAuthenticated)
+	ur.Get("/api/users", controllers.GetAllUsers)
+
+	user := ur.Group("/api/user")
+	user.Use(middlewares.IsAuthenticated)
 	{
-		users.Get("/users", controllers.GetAllUsers)
-		users.Post("/create-user", controllers.CreateUser)
-		users.Get("/get-user-id/:id", controllers.GetUserById)
-		users.Put("/user/:id", controllers.UpdateUserById)
+		user.Post("/create", controllers.CreateUser)
+		user.Get("/get-user-id/:id", controllers.GetUserById)
+		user.Put("/update/:id", controllers.UpdateUserById)
+		user.Delete("/delete/:id", controllers.DeleteUser)
 	}
 }
