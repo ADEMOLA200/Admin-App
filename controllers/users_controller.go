@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/ADEMOLA200/Admin-App.git/database"
 	"github.com/ADEMOLA200/Admin-App.git/models"
 	"github.com/gofiber/fiber/v2"
@@ -37,4 +39,29 @@ func CreateUser(uc *fiber.Ctx) error {
 		"user": user,
 		"success": true,
 	})
+}
+
+func GetUserById(uc *fiber.Ctx) error {
+    id, err := strconv.Atoi(uc.Query("id"))
+    if err != nil {
+        return uc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "message": "invalid id",
+            "success": false,
+        })
+    }
+
+    var user models.User
+    result := database.DB.First(&user, uint(id))
+    if result.Error != nil {
+        return uc.Status(fiber.StatusNotFound).JSON(fiber.Map{
+            "message": "user not found with id " + strconv.Itoa(id),
+            "success": false,
+        })
+    }
+
+    return uc.Status(fiber.StatusOK).JSON(fiber.Map{
+        "message": "user successfully found",
+        "user": user,
+        "success": true,
+    })
 }
