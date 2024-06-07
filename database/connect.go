@@ -14,7 +14,7 @@ var DB *gorm.DB
 func Connect() {
     dbUser := os.Getenv("DB_USER")
     dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("admin_app")
+	dbName := os.Getenv("DB_NAME")
 
     if dbUser == "" || dbPassword == "" {
         panic("DB_USER or DB_PASSWORD environment variables are not set")
