@@ -2,6 +2,9 @@ package app
 
 import (
     "context"
+    "log"
+
+    "github.com/joho/godotenv"
 
     "github.com/ADEMOLA200/Admin-App.git/database"
     "github.com/ADEMOLA200/Admin-App.git/logger"
@@ -9,6 +12,12 @@ import (
     "github.com/gofiber/fiber/v2"
     "go.uber.org/fx"
 )
+
+func init() {
+    if err := godotenv.Load(); err != nil {
+        log.Fatalf("Error loading .env file: %v", err)
+    }
+}
 
 var Module = fx.Options(
     fx.Provide(
