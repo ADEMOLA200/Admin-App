@@ -51,6 +51,7 @@ func RegisterHooks(
                     routes.Setup(app)
                     routes.UserSetup(app)
                     routes.RolesSetup(app)
+                    routes.PermissionsSetup(app)
                     if err := app.Listen(":9000"); err != nil {
                         logger.Fatalf("Error starting server: %v", err)
                     }
