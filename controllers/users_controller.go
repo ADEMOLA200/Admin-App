@@ -11,7 +11,7 @@ import (
 func GetAllUsers(uc *fiber.Ctx) error {
 	var users []models.User
 
-	if err := database.DB.Find(&users).Error; err != nil {
+	if err := database.DB.Preload("Role").Find(&users).Error; err != nil {
 		return uc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "could not get users",
 			"success": false,
@@ -58,7 +58,7 @@ func GetUserById(uc *fiber.Ctx) error {
     }
 
     var user models.User
-    result := database.DB.First(&user, uint(id))
+    result := database.DB.Preload("Role").Find(&user, uint(id))
     if result.Error != nil {
         return uc.Status(fiber.StatusNotFound).JSON(fiber.Map{
             "message": "user not found with the id of " + strconv.Itoa(id),
