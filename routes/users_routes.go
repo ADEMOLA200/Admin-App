@@ -13,7 +13,7 @@ func UserSetup(ur *fiber.App) {
 	user.Use(middlewares.IsAuthenticated)
 	{
 		user.Post("/create", controllers.CreateUser)
-		user.Get("/get-user-id/:id", controllers.GetUserById)
+		user.Get("/get-user/:id", controllers.GetUserById)
 		user.Put("/update/:id", controllers.UpdateUserById)
 		user.Delete("/delete/:id", controllers.DeleteUser)
 	}
