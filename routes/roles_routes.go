@@ -6,10 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func RolesSetup(ur *fiber.App) {
-	ur.Get("/api/roles", controllers.GetAllRoles)
+func RolesSetup(rr *fiber.App) {
+	rr.Get("/api/roles", controllers.GetAllRoles, middlewares.IsAuthenticated)
 
-	user := ur.Group("/api/role")
+	user := rr.Group("/api/role")
 	user.Use(middlewares.IsAuthenticated)
 	{
 		user.Post("/create", controllers.CreateRole)
