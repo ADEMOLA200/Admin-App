@@ -7,7 +7,7 @@ import (
 )
 
 func UserSetup(ur *fiber.App) {
-	ur.Get("/api/users", controllers.GetAllUsers)
+	ur.Get("/api/users", controllers.GetAllUsers, middlewares.IsAuthenticated)
 
 	user := ur.Group("/api/user")
 	user.Use(middlewares.IsAuthenticated)
