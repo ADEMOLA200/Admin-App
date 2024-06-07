@@ -8,6 +8,8 @@ type User struct {
 	LastName	string	`json:"last_name"`
 	Email		string	`gorm:"unique" json:"email"`
 	Password	[]byte	`json:"-"`
+	RoleId		uint	`json:"role_id"`
+	Role 		Role	`json:"role" gorm:"foreignKey:RoleId"`
 }
 
 func (user *User) SetPassword(password string) {
