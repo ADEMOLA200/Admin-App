@@ -26,10 +26,27 @@ func GetAllRoles(rc *fiber.Ctx) error {
 }
 
 func CreateRole(rc *fiber.Ctx) error {
-	var role models.Role
+	var roleDTO fiber.Map
 
-	if err := rc.BodyParser(&role); err != nil {
+	if err := rc.BodyParser(&roleDTO); err != nil {
 		return err
+	}
+
+	list := roleDTO["permissions"].([]interface{})
+
+	permissions := make([]models.Permissions, len(list))
+
+	for i, permissionsId := range list {
+		id, _ := strconv.Atoi(permissionsId.(string))
+
+		permissions[i] = models.Permissions{
+			Id: uint(id),
+		}
+	}
+
+	role := models.Role {
+		Name: roleDTO["name"].(string),
+		Permissions: permissions,
 	}
 
 	if err := database.DB.Create(&role).Error; err != nil {
@@ -56,7 +73,7 @@ func GetRoleById(rc *fiber.Ctx) error {
     }
 
     var role models.Role
-    result := database.DB.Find(&role, uint(id))
+    result := database.DB.Preload("Permissions").Find(&role, uint(id))
     if result.Error != nil {
         return rc.Status(fiber.StatusNotFound).JSON(fiber.Map{
             "message": "role not found with the id of " + strconv.Itoa(id),
@@ -73,33 +90,55 @@ func GetRoleById(rc *fiber.Ctx) error {
 
 func UpdateRoleById(rc *fiber.Ctx) error {
 	id, err := strconv.Atoi(rc.Params("id"))
-    if err!= nil {
-        return rc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "invalid id, id must be an integer value",
-            "success": false,
-        })
-    }
+	if err!= nil {
+		return rc.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "invalid id, id must be an integer value",
+			"success": false,
+		})
+	}
 
 	var role models.Role
-	result := database.DB.First(&role, uint(id))
-    if result.Error!= nil {
-        return rc.Status(fiber.StatusNotFound).JSON(fiber.Map{
-            "message": "role not found with the id of " + strconv.Itoa(id),
-            "success": false,
-        })
-    }
+	database.DB.First(&role, id)
+	if role.Id == 0 {
+		return rc.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "role not found with the id of " + strconv.Itoa(id),
+			"success": false,
+		})
+	}
 
-	if err := rc.BodyParser(&role); err!= nil {
+	var roleDTO fiber.Map
+	if err := rc.BodyParser(&roleDTO); err!= nil {
 		return err
+	}
+
+	list := roleDTO["permissions"].([]interface{})
+
+	permissions := make([]models.Permissions, len(list))
+
+	for i, permissionsId := range list {
+		id, _ := strconv.Atoi(permissionsId.(string))
+
+		permissions[i] = models.Permissions{
+			Id: uint(id),
+		}
+	}
+
+	var result interface{}
+	database.DB.Table("role_permissions").Where("role_id", id).Delete(&result)
+
+	role = models.Role {
+		Id: 			uint(id),
+		Name: 			roleDTO["name"].(string),
+		Permissions: 	permissions,
 	}
 
 	database.DB.Model(&role).Updates(role)
 
 	return rc.Status(fiber.StatusOK).JSON(fiber.Map{
-        "message": "updated role successfully",
-        "role": role,
-        "success": true,
-    })
+		"message": "updated role successfully",
+		"role":    role,
+		"success": true,
+	})
 }
 
 func DeleteRole(rc *fiber.Ctx) error {
