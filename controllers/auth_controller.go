@@ -25,9 +25,10 @@ func Register(ac *fiber.Ctx) error {
 	}
 
 	user := models.User {
-		FirstName: data["first_name"],
-		LastName: data["last_name"],
-		Email: data["email"],
+		FirstName: 	data["first_name"],
+		LastName: 	data["last_name"],
+		Email: 		data["email"],
+		RoleId: 	1,
 	}
 
 	user.SetPassword(data["password"])

@@ -56,7 +56,7 @@ func GetRoleById(uc *fiber.Ctx) error {
     }
 
     var role models.Role
-    result := database.DB.First(&role, uint(id))
+    result := database.DB.Find(&role, uint(id))
     if result.Error != nil {
         return uc.Status(fiber.StatusNotFound).JSON(fiber.Map{
             "message": "role not found with the id of " + strconv.Itoa(id),
