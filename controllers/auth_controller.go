@@ -17,7 +17,7 @@ func Register(ac *fiber.Ctx) error {
 		return err
 	}
 
-	if data["password"] != data["password_confirm"] {
+	if data["password"] != data["confirm_password"] {
 		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "passwords do not match",
 			"success": false,
@@ -56,7 +56,7 @@ func Login(ac *fiber.Ctx) error {
 
 	var user models.User
 
-	if err := database.DB.Where("email = ?", data["email"]).First(&user).Error; err != nil {
+	if err := database.DB.Where("email = ?", data["email"]).Preload("Role").First(&user).Error; err != nil {
 		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "user not found",
 			"success": false,
@@ -99,7 +99,7 @@ func GetUser (ac *fiber.Ctx) error {
 
 	var user models.User
 
-	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
+	if err := database.DB.Where("id = ?", id).Preload("Role").First(&user).Error; err != nil {
 		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "could not get user",
 			"success": false,
@@ -125,5 +125,78 @@ func Logout (ac *fiber.Ctx) error {
 
 	return ac.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "user logged out successfully",
+	})
+}
+
+func UpdateProfile(ac *fiber.Ctx) error {
+	var data map[string]string
+
+	if err := ac.BodyParser(&data); err != nil {
+		return err
+	}
+
+	cookie := ac.Cookies("jwt")
+
+	id, _ := utils.ParseJwt(cookie)
+
+	userId, _ := strconv.Atoi(id)
+
+	user := models.User{
+		Id: uint(userId),
+		FirstName:	data["first_name"],
+		LastName: 	data["last_name"],
+		Email: 		data["email"],
+	}
+
+	if err := database.DB.Model(&user).Updates(user).Error; err != nil {
+		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "could not get user",
+			"success": false,
+		})
+	}
+
+	return ac.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "updated user profile successfully",
+		"user": user,
+		"success": true,
+	})
+}
+
+func ChangePassword(ac *fiber.Ctx) error {
+	var data map[string]string
+
+	if err := ac.BodyParser(&data); err != nil {
+		return err
+	}
+
+	if data["password"] != data["confirm_password"] {
+		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "passwords do not match",
+			"success": false,
+		})
+	}
+
+	cookie := ac.Cookies("jwt")
+
+	id, _ := utils.ParseJwt(cookie)
+
+	userId, _ := strconv.Atoi(id)
+
+	user := models.User {
+		Id: uint(userId),
+	}
+
+	user.SetPassword(data["password"])
+
+	if err := database.DB.Model(&user).Updates(user).Error; err != nil {
+		return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "could not get user",
+			"success": false,
+		})
+	}
+
+	return ac.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "user password changed successfully",
+		"success": true,
 	})
 }
