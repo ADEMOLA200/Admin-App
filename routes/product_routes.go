@@ -8,6 +8,8 @@ import (
 
 func ProductSetup(ur *fiber.App) {
 	ur.Get("/api/products", controllers.GetAllProducts, middlewares.IsAuthenticated)
+	ur.Post("/api/upload/image", controllers.UploadImage, middlewares.IsAuthenticated)
+	ur.Static("/api/upload/image", "./uploads")
 
 	user := ur.Group("/api/product")
 	user.Use(middlewares.IsAuthenticated)
