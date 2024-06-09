@@ -35,5 +35,7 @@ func Connect() {
         &models.Role{},
         &models.Permissions{},
         &models.Product{},
+        &models.Order{},
+        &models.OrderItem{},
     )
 }
