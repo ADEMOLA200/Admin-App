@@ -24,10 +24,27 @@ func Register(ac *fiber.Ctx) error {
 		})
 	}
 
-	user := models.User {
-		FirstName: 	data["first_name"],
-		LastName: 	data["last_name"],
-		Email: 		data["email"],
+	// if data["first_name"] == "" || data["last_name"] == "" || data["email"] == "" {
+	// 	return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	// 		"message": "first name, last name, and email are required",
+	// 		"success": false,
+	// 	})
+	// }
+
+	requiredFields := []string{"first_name", "last_name", "email", "password"}
+	for _, field := range requiredFields {
+		if data[field] == "" {
+			return ac.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": field + " is required",
+				"success": false,
+			})
+		}
+	}
+
+	user := models.User{
+		FirstName:  data["first_name"],
+		LastName:  data["last_name"],
+		Email: 	 data["email"],
 		RoleId: 	1,
 	}
 
