@@ -15,8 +15,7 @@ Admin-app is a Go-based administration panel application.
 ### Development Directory Creation
 
 ### Get the Code
-git clone [https://github.com/go-admin-team/go-admin.git](https://github.com/ADEMOLA200/Admin-App.git)
-# git clone https://github.com/go-admin-team/go-admin-ui.git
+git clone ```[https://github.com/go-admin-team/go-admin.git]```
 
 ```bash
 mkdir goadmin
