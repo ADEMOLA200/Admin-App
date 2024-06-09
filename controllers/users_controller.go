@@ -33,7 +33,7 @@ func GetAllUsers(uc *fiber.Ctx) error {
 		})
 	}
 
-	lastPage := math.Ceil(float64(int(total) / limit))
+	lastPage := math.Ceil(float64(float64(total) / float64(limit)))
 
 	return uc.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "get all users successfully",
