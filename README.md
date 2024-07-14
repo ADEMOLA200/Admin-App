@@ -10,7 +10,7 @@ Admin-app is a Go-based administration panel application.
 
 * Go 1.22.0
 * Nodejs: v14.16.0
-* Npm: 6.14.11
+* Npm: 6.14.12
 
 ### Development Directory Creation
 
